@@ -1,4 +1,4 @@
-﻿namespace Inventory.Core.Domain
+﻿namespace Inventory.Application
 {
     public class Class1
     {
