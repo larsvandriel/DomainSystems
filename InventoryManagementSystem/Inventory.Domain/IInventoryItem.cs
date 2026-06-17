@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Inventory.Core.Domain
+namespace Inventory.Domain
 {
     public interface IInventoryItem
     {

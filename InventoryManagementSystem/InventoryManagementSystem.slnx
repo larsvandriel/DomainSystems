@@ -2,6 +2,7 @@
   <Folder Name="/Common/">
     <Project Path="../../Common/CommonLibraries/Common.Messaging.Abstractions/Common.Messaging.Abstractions.csproj" />
     <Project Path="../../Common/CommonLibraries/Common.Messaging.Async/Common.Messaging.Async.csproj" />
+    <Project Path="../../Common/CommonLibraries/Common.Results/Common.Results.csproj" />
   </Folder>
   <Project Path="Inventory.Application/Inventory.Application.csproj" />
   <Project Path="Inventory.Domain/Inventory.Domain.csproj" />

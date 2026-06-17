@@ -4,6 +4,6 @@
     {
         Increase = 1,
         Decrease = 2,
-        Correction = 3
+        Adjustment = 3
     }
 }
