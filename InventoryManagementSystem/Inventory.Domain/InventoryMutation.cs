@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Inventory.Core.Domain;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
