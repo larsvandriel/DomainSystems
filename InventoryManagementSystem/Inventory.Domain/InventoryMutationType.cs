@@ -1,4 +1,4 @@
-﻿namespace Inventory.Core.Domain
+﻿namespace Inventory.Domain
 {
     public enum InventoryMutationType
     {

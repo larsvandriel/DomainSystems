@@ -19,16 +19,9 @@ namespace Inventory.Application.Stock.Queries
         {
             ArgumentNullException.ThrowIfNull(request, nameof(request));
 
-            var stock = await _stockRepository.GetByItemIdAsync(request.ItemId, cancellationToken);
+            var mutations = await _mutationRepository.GetAllByItemIdAsync(request.ItemId, cancellationToken);
 
-            if (stock is null)
-            {
-                return Result<IEnumerable<InventoryMutation>>.Failure("Stock not found.");
-            }
-
-            var result = _mutationRepository.GetAllByItemIdAsync(request.ItemId, cancellationToken);
-
-            return result;
+            return Result<IEnumerable<InventoryMutation>>.Success(mutations);
         }
     }
 }

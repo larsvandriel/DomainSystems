@@ -1,71 +1,81 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Inventory.Domain
 {
     public sealed class InventoryStock
     {
-        public Guid ItemId { get; }
+        public InventoryItem Item { get; }
         public Quantity Quantity { get; private set; }
 
-        private InventoryStock(Guid itemId, Quantity quantity)
+        private readonly List<InventoryMutation> _mutations = [];
+
+        public IReadOnlyCollection<InventoryMutation> Mutations => _mutations;
+
+        private InventoryStock(InventoryItem item, Quantity quantity)
         {
-            ItemId = itemId;
+            Item = item;
             Quantity = quantity;
         }
 
-        public static InventoryStock Create(Guid itemId, Quantity quantity)
+        public static InventoryStock Create(InventoryItem item, Quantity quantity)
         {
-            if(itemId == Guid.Empty)
-            {
-                throw new ArgumentException("ItemId cannot be empty.", nameof(itemId));
-            }
-
+            ArgumentNullException.ThrowIfNull(item, nameof(item));
             ArgumentNullException.ThrowIfNull(quantity, nameof(quantity));
-            return new InventoryStock(itemId, quantity);
+
+            return new InventoryStock(item, quantity);
+        }
+
+        public static InventoryStock Restore(InventoryItem item, Quantity quantity)
+        {
+            ArgumentNullException.ThrowIfNull(item);
+            ArgumentNullException.ThrowIfNull(quantity, nameof(quantity));
+
+            return new InventoryStock(item, quantity);
         }
 
         public void Increase(Quantity quantity, IUnitConverter unitConverter)
         {
             ArgumentNullException.ThrowIfNull(quantity, nameof(quantity));
-            ArgumentOutOfRangeException.ThrowIfNegative(quantity.Value, nameof(quantity));
+            ArgumentNullException.ThrowIfNull(unitConverter, nameof(unitConverter));
+            ArgumentOutOfRangeException.ThrowIfNegative(quantity.Value, nameof(quantity.Value));
 
-            if (Quantity.Unit == quantity.Unit)
-            {
-                Quantity = Quantity.Add(quantity);
-                return;
-            }
+            var quantityToAdd = Quantity.Unit == quantity.Unit ? quantity : unitConverter.Convert(quantity, Quantity.Unit);
 
-            if (!unitConverter.CanConvert(quantity.Unit, Quantity.Unit))
-            {
-                throw new InvalidOperationException($"Cannot convert '{quantity.Unit}' to '{Quantity.Unit}'.");
-            }
+            Quantity = Quantity.Add(quantityToAdd);
 
-            var convertedQuantity = unitConverter.Convert(quantity, Quantity.Unit);
-
-            Quantity = Quantity.Add(convertedQuantity);
+            _mutations.Add(InventoryMutation.CreateIncrease(Item, quantity));
         }
 
         public void Decrease(Quantity quantity, IUnitConverter unitConverter)
         {
             ArgumentNullException.ThrowIfNull(quantity, nameof(quantity));
-            ArgumentOutOfRangeException.ThrowIfNegative(quantity.Value, nameof(quantity));
+            ArgumentNullException.ThrowIfNull(unitConverter, nameof(unitConverter));
+            ArgumentOutOfRangeException.ThrowIfNegative(quantity.Value, nameof(quantity.Value));
 
-            if (Quantity.Unit == quantity.Unit)
-            {
-                Quantity = Quantity.Subtract(quantity);
-                return;
-            }
+            var quantityToDecrease = Quantity.Unit == quantity.Unit ? quantity : unitConverter.Convert(quantity, Quantity.Unit);
 
-            if (!unitConverter.CanConvert(quantity.Unit, Quantity.Unit))
-            {
-                throw new InvalidOperationException($"Cannot convert '{quantity.Unit}' to '{Quantity.Unit}'.");
-            }
+            Quantity = Quantity.Subtract(quantityToDecrease);
 
-            var convertedQuantity = unitConverter.Convert(quantity, Quantity.Unit);
+            _mutations.Add(InventoryMutation.CreateDecrease(Item, quantity));
+        }
 
-            Quantity = Quantity.Subtract(convertedQuantity);
+        public void Adjust(Quantity quantity)
+        {
+            ArgumentNullException.ThrowIfNull(quantity, nameof(quantity));
+                        
+            Quantity = quantity;
+
+            _mutations.Add(InventoryMutation.CreateAdjustment(Item, quantity));
+        }
+
+        public IReadOnlyList<InventoryMutation> DequeueMutations()
+        {
+            var mutations = _mutations.ToList();
+            _mutations.Clear();
+            return mutations;
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Inventory.Application.Stock.Queries
                 return Result<InventoryStock>.Failure("Stock not found.");
             }
 
-            return result;
+            return Result<InventoryStock>.Success(result);
         }
     }
 }

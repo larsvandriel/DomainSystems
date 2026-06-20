@@ -1,9 +1,12 @@
 <Solution>
   <Folder Name="/Common/">
-    <Project Path="../../Common/CommonLibraries/Common.Messaging.Abstractions/Common.Messaging.Abstractions.csproj" />
-    <Project Path="../../Common/CommonLibraries/Common.Messaging.Async/Common.Messaging.Async.csproj" />
-    <Project Path="../../Common/CommonLibraries/Common.Results/Common.Results.csproj" />
+    <Project Path="D:/larsv/Documents/Projects/Common/CommonLibraries/Common.Messaging.Abstractions/Common.Messaging.Abstractions.csproj" />
+    <Project Path="D:/larsv/Documents/Projects/Common/CommonLibraries/Common.Messaging.Async/Common.Messaging.Async.csproj" />
+    <Project Path="D:/larsv/Documents/Projects/Common/CommonLibraries/Common.Resilience.SqlServer/Common.Resilience.SqlServer.csproj" />
+    <Project Path="D:/larsv/Documents/Projects/Common/CommonLibraries/Common.Resilience/Common.Resilience.csproj" />
+    <Project Path="D:/larsv/Documents/Projects/Common/CommonLibraries/Common.Results/Common.Results.csproj" />
   </Folder>
-  <Project Path="Inventory.Application/Inventory.Application.csproj" />
-  <Project Path="Inventory.Domain/Inventory.Domain.csproj" />
+  <Project Path="D:/larsv/Documents/Projects/InventoryManagementSystem/InventoryManagementSystem/Inventory.Application/Inventory.Application.csproj" />
+  <Project Path="D:/larsv/Documents/Projects/InventoryManagementSystem/InventoryManagementSystem/Inventory.Domain/Inventory.Domain.csproj" />
+  <Project Path="D:/larsv/Documents/Projects/InventoryManagementSystem/InventoryManagementSystem/Inventory.Infrastructure/Inventory.Infrastructure.csproj" Id="707a4130-9156-4c88-8b7d-a31ad0b6c4bc" />
 </Solution>

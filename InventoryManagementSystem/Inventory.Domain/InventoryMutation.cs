@@ -1,59 +1,58 @@
-﻿using Inventory.Core.Domain;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Inventory.Domain
+﻿namespace Inventory.Domain
 {
     public sealed class InventoryMutation
     {
-        public Guid ItemId { get; }
+        public InventoryItem Item { get; }
         public Quantity Quantity { get; }
         public InventoryMutationType Type { get; }
-        public DateTime CreatedAt { get; }
+        public DateTimeOffset CreatedAt { get; }
 
-        private InventoryMutation(Guid itemId, Quantity quantity, InventoryMutationType type)
+        private InventoryMutation(InventoryItem item, Quantity quantity, InventoryMutationType type) : this(item, quantity, type, DateTimeOffset.UtcNow)
         {
-            ItemId = itemId;
+        }
+
+        private InventoryMutation(InventoryItem item, Quantity quantity, InventoryMutationType type, DateTimeOffset createdAt)
+        {
+            Item = item;
             Quantity = quantity;
             Type = type;
-            CreatedAt = DateTime.UtcNow;
+            CreatedAt = createdAt;
         }
 
-        public static InventoryMutation CreateIncrease(Guid itemId, Quantity quantity)
+        public static InventoryMutation CreateIncrease(InventoryItem item, Quantity quantity)
         {
-            if(itemId == Guid.Empty)
-            {
-                throw new ArgumentException("ItemId cannot be empty.", nameof(itemId));
-            }
+            ArgumentNullException.ThrowIfNull(item, nameof(item));
 
             ArgumentNullException.ThrowIfNull(quantity, nameof(quantity));
 
-            return new InventoryMutation(itemId, quantity, InventoryMutationType.Increase);
+            return new InventoryMutation(item, quantity, InventoryMutationType.Increase);
         }
 
-        public static InventoryMutation CreateDecrease(Guid itemId, Quantity quantity)
+        public static InventoryMutation CreateDecrease(InventoryItem item, Quantity quantity)
         {
-            if (itemId == Guid.Empty)
-            {
-                throw new ArgumentException("ItemId cannot be empty.", nameof(itemId));
-            }
+            ArgumentNullException.ThrowIfNull(item, nameof(item));
 
             ArgumentNullException.ThrowIfNull(quantity, nameof(quantity));
 
-            return new InventoryMutation(itemId, quantity, InventoryMutationType.Decrease);
+            return new InventoryMutation(item, quantity, InventoryMutationType.Decrease);
         }
 
-        public static InventoryMutation CreateAdjustment(Guid itemId, Quantity quantity)
+        public static InventoryMutation CreateAdjustment(InventoryItem item, Quantity quantity)
         {
-            if (itemId == Guid.Empty)
-            {
-                throw new ArgumentException("ItemId cannot be empty.", nameof(itemId));
-            }
+            ArgumentNullException.ThrowIfNull(item, nameof(item));
 
             ArgumentNullException.ThrowIfNull(quantity, nameof(quantity));
 
-            return new InventoryMutation(itemId, quantity, InventoryMutationType.Adjustment);
+            return new InventoryMutation(item, quantity, InventoryMutationType.Adjustment);
+        }
+
+        public static InventoryMutation Restore(InventoryItem item, Quantity quantity, InventoryMutationType type, DateTimeOffset createdAt)
+        {
+            ArgumentNullException.ThrowIfNull(item, nameof(item));
+
+            ArgumentNullException.ThrowIfNull(quantity, nameof(quantity));
+
+            return new InventoryMutation(item, quantity, type, createdAt);
         }
     }
 }

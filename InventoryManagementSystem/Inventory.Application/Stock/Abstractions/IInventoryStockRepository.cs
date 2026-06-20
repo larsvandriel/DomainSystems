@@ -7,9 +7,9 @@ namespace Inventory.Application.Stock.Abstractions
 {
     public interface IInventoryStockRepository
     {
-        Task AddAsync(object stock, CancellationToken cancellationToken);
-        Task<IEnumerable<InventoryStock>> GetAllAsync(CancellationToken cancellationToken);
-        Task<InventoryStock> GetByItemIdAsync(Guid itemId, CancellationToken cancellationToken);
-        Task UpdateAsync(object stock, CancellationToken cancellationToken);
+        Task AddAsync(InventoryStock stock, CancellationToken cancellationToken);
+        Task<IReadOnlyList<InventoryStock>> GetAllAsync(CancellationToken cancellationToken);
+        Task<InventoryStock?> GetByItemIdAsync(Guid itemId, CancellationToken cancellationToken);
+        Task UpdateAsync(InventoryStock stock, CancellationToken cancellationToken);
     }
 }

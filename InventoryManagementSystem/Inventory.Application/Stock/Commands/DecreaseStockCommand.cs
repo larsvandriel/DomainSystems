@@ -6,5 +6,5 @@ using System.Text;
 
 namespace Inventory.Application.Stock.Commands
 {
-    public sealed record DecreaseStockCommand(Guid ItemId, decimal Amount, string Unit) : IRequest<Result> { }
+    public sealed record DecreaseStockCommand(Guid ItemId, string ItemName, decimal Amount, string Unit) : IRequest<Result> { }
 }

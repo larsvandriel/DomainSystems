@@ -15,11 +15,13 @@
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(unit, nameof(unit));
             
-            return new Quantity(amount, unit);
+            return new Quantity(amount, unit.Trim());
         }
 
         public Quantity Add(Quantity other)
         {
+            ArgumentNullException.ThrowIfNull(other, nameof(other));
+
             if(Unit != other.Unit)
             {
                 throw new InvalidOperationException($"Cannot sum '{Unit}' and '{other.Unit}' directly.");
@@ -30,6 +32,8 @@
 
         public Quantity Subtract(Quantity other)
         {
+            ArgumentNullException.ThrowIfNull(other, nameof(other));
+
             if (Unit != other.Unit)
             {
                 throw new InvalidOperationException($"Cannot subtract '{Unit}' and '{other.Unit}' directly.");
