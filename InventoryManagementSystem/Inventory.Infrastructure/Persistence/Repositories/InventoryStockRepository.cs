@@ -16,28 +16,16 @@ namespace Inventory.Infrastructure.Persistence.Repositories
 
         public Task AddAsync(InventoryStock stock, CancellationToken cancellationToken)
         {
-            return _retryPolicy.ExecuteAsync(async ct =>
-            {
-                _dbContext.InventoryStocks.Add(stock.ToEntity());
-                await _dbContext.SaveChangesAsync(ct);
-            }, cancellationToken);
+            _dbContext.InventoryStocks.Add(stock.ToEntity());
+            return Task.CompletedTask;
         }
 
-        public Task UpdateAsync(InventoryStock stock, CancellationToken cancellationToken)
+        public async Task UpdateAsync(InventoryStock stock, CancellationToken cancellationToken)
         {
-            return _retryPolicy.ExecuteAsync(async ct =>
-            {
-                var entity = await _dbContext.InventoryStocks
-                    .Include(x => x.Item)
-                    .FirstOrDefaultAsync(x => x.ItemId == stock.Item.Id, ct);
+            var entity = await _dbContext.InventoryStocks.Include(x => x.Item).FirstOrDefaultAsync(x => x.ItemId == stock.Item.Id, cancellationToken)
+                ?? throw new InvalidOperationException("Inventory stock not found.");
 
-                if (entity is null)
-                    throw new InvalidOperationException("Inventory stock not found.");
-
-                entity.UpdateFromDomain(stock);
-
-                await _dbContext.SaveChangesAsync(ct);
-            }, cancellationToken);
+            entity.UpdateFromDomain(stock);
         }
 
         public async Task<InventoryStock?> GetByItemIdAsync(Guid itemId, CancellationToken cancellationToken)
@@ -55,7 +43,7 @@ namespace Inventory.Infrastructure.Persistence.Repositories
                 async ct => await _dbContext.InventoryStocks.AsNoTracking().Include(x => x.Item).ToListAsync(ct),
                 cancellationToken);
 
-           return [.. result.Select(x => x.ToDomain())];
+            return [.. result.Select(x => x.ToDomain())];
         }
     }
 }

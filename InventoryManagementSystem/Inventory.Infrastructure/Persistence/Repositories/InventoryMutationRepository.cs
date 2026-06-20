@@ -16,11 +16,8 @@ namespace Inventory.Infrastructure.Persistence.Repositories
 
         public Task AddAsync(InventoryMutation mutation, CancellationToken cancellationToken)
         {
-            return _retryPolicy.ExecuteAsync(async ct =>
-            {
-                _dbContext.InventoryMutations.Add(mutation.ToEntity());
-                await _dbContext.SaveChangesAsync(ct);
-            }, cancellationToken);
+           _dbContext.InventoryMutations.Add(mutation.ToEntity());
+            return Task.CompletedTask;
         }
 
         public async Task<IReadOnlyList<InventoryMutation>> GetAllByItemIdAsync(Guid itemId, CancellationToken cancellationToken)

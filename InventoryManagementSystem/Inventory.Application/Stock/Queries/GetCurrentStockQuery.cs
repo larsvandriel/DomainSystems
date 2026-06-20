@@ -7,7 +7,5 @@ using System.Text;
 
 namespace Inventory.Application.Stock.Queries
 {
-    public sealed record GetCurrentStockQuery : IRequest<Result<IEnumerable<InventoryStock>>>
-    {
-    }
+    public sealed record GetCurrentStockQuery : IRequest<Result<IEnumerable<InventoryStock>>>;
 }

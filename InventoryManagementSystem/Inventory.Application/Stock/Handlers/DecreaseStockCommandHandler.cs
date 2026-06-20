@@ -1,4 +1,5 @@
 ﻿using Common.Messaging.Abstractions.Requests;
+using Common.Persistence.Abstractions;
 using Common.Results;
 using Inventory.Application.Stock.Abstractions;
 using Inventory.Application.Stock.Commands;
@@ -10,49 +11,53 @@ using System.Text;
 namespace Inventory.Application.Stock.Handlers
 {
     public sealed class DecreaseStockCommandHandler(
+        ITransactionalExecutor transactionalExecutor,
         IUnitConverter unitConverter,
         IInventoryStockRepository stockRepository,
         IInventoryItemRepository itemRepository,
         IInventoryMutationRepository mutationRepository) : IRequestHandler<DecreaseStockCommand, Result>
     {
+        private readonly ITransactionalExecutor _transactionExecutor = transactionalExecutor;
         private readonly IUnitConverter _unitConverter = unitConverter;
         private readonly IInventoryStockRepository _stockRepository = stockRepository;
         private readonly IInventoryItemRepository _itemRepository = itemRepository;
         private readonly IInventoryMutationRepository _mutationRepository = mutationRepository;
 
-        public async Task<Result> HandleAsync(DecreaseStockCommand request, CancellationToken cancellationToken = default)
+        public Task<Result> HandleAsync(DecreaseStockCommand request, CancellationToken cancellationToken = default)
         {
-            var item = await _itemRepository.GetByIdAsync(request.ItemId, cancellationToken);
-
-            if (item is null)
+            return _transactionExecutor.ExecuteAsync(async ct =>
             {
-                item = InventoryItem.Create(request.ItemId, request.ItemName);
-                await _itemRepository.AddAsync(item, cancellationToken);
-            }
+                var item = await _itemRepository.GetByIdAsync(request.ItemId, ct);
 
-            var quantity = Quantity.Create(request.Amount, request.Unit);
+                if (item is null)
+                {
+                    item = InventoryItem.Create(request.ItemId, request.ItemName);
+                    await _itemRepository.AddAsync(item, ct);
+                }
 
-            var stock = await _stockRepository.GetByItemIdAsync(request.ItemId, cancellationToken);
+                var quantity = Quantity.Create(request.Amount, request.Unit);
 
-            if (stock is null)
-            {
-                stock = InventoryStock.Create(item, Quantity.Create(0, request.Unit));
-                stock.Decrease(quantity, _unitConverter);
+                var stock = await _stockRepository.GetByItemIdAsync(request.ItemId, ct);
 
-                await _stockRepository.AddAsync(stock, cancellationToken);
-            }
-            else
-            {
-                stock.Decrease(quantity, _unitConverter);
-                await _stockRepository.UpdateAsync(stock, cancellationToken);
-            }
+                if (stock is null)
+                {
+                    stock = InventoryStock.Create(item, Quantity.Create(0, request.Unit));
+                    stock.Decrease(quantity, _unitConverter);
 
-            foreach (var mutation in stock.DequeueMutations())
-            {
-                await _mutationRepository.AddAsync(mutation, cancellationToken);
-            }
+                    await _stockRepository.AddAsync(stock, ct);
+                }
+                else
+                {
+                    stock.Decrease(quantity, _unitConverter);
+                    await _stockRepository.UpdateAsync(stock, ct);
+                }
 
-            return Result.Success();
-        }
+                foreach (var mutation in stock.DequeueMutations())
+                {
+                    await _mutationRepository.AddAsync(mutation, ct);
+                }
+
+                return Result.Success();
+            }, cancellationToken);        }
     }
 }

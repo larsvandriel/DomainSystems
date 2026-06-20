@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/Common/">
+    <Project Path="../../Common/CommonLibraries/Common.Persistence.Abstractions/Common.Persistence.Abstractions.csproj" />
     <Project Path="D:/larsv/Documents/Projects/Common/CommonLibraries/Common.Messaging.Abstractions/Common.Messaging.Abstractions.csproj" />
     <Project Path="D:/larsv/Documents/Projects/Common/CommonLibraries/Common.Messaging.Async/Common.Messaging.Async.csproj" />
     <Project Path="D:/larsv/Documents/Projects/Common/CommonLibraries/Common.Resilience.SqlServer/Common.Resilience.SqlServer.csproj" />
