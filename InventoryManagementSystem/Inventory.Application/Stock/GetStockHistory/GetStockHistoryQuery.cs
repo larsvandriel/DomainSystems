@@ -5,9 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Inventory.Application.Stock.Queries
+namespace Inventory.Application.Stock.GetStockHistory
 {
-    public sealed record GetStockQuery : IRequest<Result<InventoryStock>>
+    public sealed record GetStockHistoryQuery : IRequest<Result<IEnumerable<InventoryMutation>>>
     {
         public required Guid ItemId { get; init; }
     }

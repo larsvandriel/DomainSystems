@@ -1,12 +1,12 @@
 ﻿using Common.Messaging.Abstractions.Requests;
 using Common.Results;
-using Inventory.Application.Stock.Abstractions;
+using Inventory.Application.Abstractions;
 using Inventory.Domain;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Inventory.Application.Stock.Queries
+namespace Inventory.Application.Stock.GetStockHistory
 {
     public sealed class GetStockHistoryQueryHandler(
         IInventoryStockRepository stockRepository,

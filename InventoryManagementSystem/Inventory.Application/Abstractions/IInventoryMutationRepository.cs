@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Inventory.Application.Stock.Abstractions
+namespace Inventory.Application.Abstractions
 {
     public interface IInventoryMutationRepository
     {

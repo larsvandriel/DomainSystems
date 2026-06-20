@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Inventory.Application.Stock.Queries
+namespace Inventory.Application.Stock.GetCurrentStock
 {
     public sealed record GetCurrentStockQuery : IRequest<Result<IEnumerable<InventoryStock>>>;
 }

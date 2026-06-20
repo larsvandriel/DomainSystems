@@ -1,14 +1,13 @@
 ﻿using Common.Messaging.Abstractions.Requests;
 using Common.Persistence.Abstractions;
 using Common.Results;
-using Inventory.Application.Stock.Abstractions;
-using Inventory.Application.Stock.Commands;
+using Inventory.Application.Abstractions;
 using Inventory.Domain;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Inventory.Application.Stock.Handlers
+namespace Inventory.Application.Stock.DecreaseStock
 {
     public sealed class DecreaseStockCommandHandler(
         ITransactionalExecutor transactionalExecutor,

@@ -1,5 +1,5 @@
 ﻿using Common.Resilience;
-using Inventory.Application.Stock.Abstractions;
+using Inventory.Application.Abstractions;
 using Inventory.Domain;
 using Inventory.Infrastructure.Persistence.Mappers;
 using Microsoft.EntityFrameworkCore;
