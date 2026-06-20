@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Inventory.Domain
 {
-    public sealed class InventoryItem : IInventoryItem
+    public sealed class InventoryItem
     {
         public const int NameMaxLength = 100;
 
