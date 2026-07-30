@@ -1,5 +1,6 @@
 ﻿using Common.Messaging.Abstractions.Requests;
 using Common.Results;
+using Inventory.Application.Reservations.Models;
 using Inventory.Application.Reservations.Services;
 using Inventory.Domain.Models;
 using System;

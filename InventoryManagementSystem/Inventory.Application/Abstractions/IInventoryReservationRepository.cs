@@ -1,5 +1,5 @@
 ﻿using Common.Persistence.Concurrency;
-using Inventory.Application.Reservations.Services;
+using Inventory.Application.Reservations.Models;
 using Inventory.Domain.Models;
 using System;
 using System.Collections.Generic;

@@ -2,7 +2,7 @@
 using Common.Resilience;
 using Inventory.Application.Abstractions;
 using Inventory.Application.Reservations.Enums;
-using Inventory.Application.Reservations.Services;
+using Inventory.Application.Reservations.Models;
 using Inventory.Domain.Enums;
 using Inventory.Domain.Models;
 using Inventory.Infrastructure.Persistence.Mappers;
@@ -78,10 +78,8 @@ namespace Inventory.Infrastructure.Persistence.Repositories
         {
             ArgumentNullException.ThrowIfNull(reservation);
 
-            var entity = await _dbContext.InventoryReservations.Include(x => x.Item).FirstOrDefaultAsync(x => x.Id == reservation.Id, cancellationToken);
-
-            if (entity == null)
-                throw new InvalidOperationException($"Inventory reservation for reservation '{reservation.Id}' was not found.");
+            var entity = await _dbContext.InventoryReservations.Include(x => x.Item).FirstOrDefaultAsync(x => x.Id == reservation.Id, cancellationToken)
+                ?? throw new InvalidOperationException($"Inventory reservation for reservation '{reservation.Id}' was not found.");
 
             entity.UpdateFromDomain(reservation);
 
