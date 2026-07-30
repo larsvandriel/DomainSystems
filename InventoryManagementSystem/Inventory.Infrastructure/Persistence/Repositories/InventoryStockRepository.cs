@@ -1,6 +1,7 @@
 ﻿using Common.Resilience;
+using Common.Persistence.Concurrency;
 using Inventory.Application.Abstractions;
-using Inventory.Domain;
+using Inventory.Domain.Models;
 using Inventory.Infrastructure.Persistence.Mappers;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -14,33 +15,40 @@ namespace Inventory.Infrastructure.Persistence.Repositories
         private readonly InventoryDbContext _dbContext = dbContext;
         private readonly IRetryPolicy _retryPolicy = retryPolicy;
 
-        public Task AddAsync(InventoryStock stock, CancellationToken cancellationToken)
+        public async Task AddAsync(InventoryStock stock, CancellationToken cancellationToken)
         {
-            _dbContext.InventoryStocks.Add(stock.ToEntity());
-            return Task.CompletedTask;
+            await _dbContext.InventoryStocks.AddAsync(stock.ToEntity(), cancellationToken);
         }
 
-        public async Task UpdateAsync(InventoryStock stock, CancellationToken cancellationToken)
+        public async Task UpdateAsync(InventoryStock stock, ConcurrencyToken concurrencyToken, CancellationToken cancellationToken)
         {
+            ArgumentNullException.ThrowIfNull(stock);
+            ArgumentNullException.ThrowIfNull(concurrencyToken);
+
             var entity = await _dbContext.InventoryStocks.Include(x => x.Item).FirstOrDefaultAsync(x => x.ItemId == stock.Item.Id, cancellationToken)
-                ?? throw new InvalidOperationException("Inventory stock not found.");
+                ?? throw new InvalidOperationException($"Inventory stock for item '{stock.Item.Id}' was not found.");
 
             entity.UpdateFromDomain(stock);
+
+            _dbContext.Entry(entity).Property(x => x.RowVersion).OriginalValue = concurrencyToken.ToArray();
         }
 
-        public async Task<InventoryStock?> GetByItemIdAsync(Guid itemId, CancellationToken cancellationToken)
+        public async Task<ConcurrencySnapshot<InventoryStock>?> GetByItemIdAsync(Guid itemId, CancellationToken cancellationToken)
         {
-            var result = await _retryPolicy.ExecuteAsync(
-                ct => _dbContext.InventoryStocks.AsNoTracking().Include(x => x.Item).FirstOrDefaultAsync(x => x.Item.Id == itemId, ct),
+            var entity = await _retryPolicy.ExecuteAsync(
+                ct => _dbContext.InventoryStocks.AsNoTracking().Include(x => x.Item).FirstOrDefaultAsync(x => x.ItemId == itemId, ct),
                 cancellationToken);
 
-            return result?.ToDomain();
+            if (entity == null)
+                return null;
+
+            return new ConcurrencySnapshot<InventoryStock>(entity.ToDomain(), new ConcurrencyToken(entity.RowVersion));
         }
 
         public async Task<IReadOnlyList<InventoryStock>> GetAllAsync(CancellationToken cancellationToken)
         {
             var result = await _retryPolicy.ExecuteAsync(
-                async ct => await _dbContext.InventoryStocks.AsNoTracking().Include(x => x.Item).ToListAsync(ct),
+                ct => _dbContext.InventoryStocks.AsNoTracking().Include(x => x.Item).ToListAsync(ct),
                 cancellationToken);
 
             return [.. result.Select(x => x.ToDomain())];

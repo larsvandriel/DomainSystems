@@ -12,6 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\CommonLibraries\Common.Persistence.Concurrency\Common.Persistence.Concurrency.csproj" />
+    <ProjectReference Include="..\..\..\Common\CommonLibraries\Common.Persistence.EntityFramework.SqlServer\Common.Persistence.EntityFramework.SqlServer.csproj" />
     <ProjectReference Include="..\..\..\Common\CommonLibraries\Common.Resilience\Common.Resilience.csproj" />
     <ProjectReference Include="..\Inventory.Application\Inventory.Application.csproj" />
   </ItemGroup>

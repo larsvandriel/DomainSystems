@@ -11,5 +11,7 @@ namespace Inventory.Infrastructure.Persistence.Entities
 
         public decimal QuantityValue { get; set; }
         public string QuantityUnit { get; set; } = string.Empty;
+
+        public byte[] RowVersion { get; set; } = [];
     }
 }

@@ -17,9 +17,13 @@ namespace Inventory.Infrastructure.Persistence.Configurations
 
             builder.HasOne(x => x.Item).WithMany().HasForeignKey(x => x.ItemId);
 
-            builder.Property(x => x.QuantityValue).HasPrecision(18, 4).IsRequired();
+            builder.Property(x => x.OldQuantityValue).HasPrecision(18, 4);
 
-            builder.Property(x => x.QuantityUnit).HasMaxLength(20).IsRequired();
+            builder.Property(x => x.OldQuantityUnit).HasMaxLength(20);
+
+            builder.Property(x => x.NewQuantityValue).HasPrecision(18, 4).IsRequired();
+
+            builder.Property(x => x.NewQuantityUnit).HasMaxLength(20).IsRequired();
 
             builder.Property(x => x.Type).HasConversion<string>().HasMaxLength(50).IsRequired();
 

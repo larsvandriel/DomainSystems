@@ -1,4 +1,4 @@
-﻿using Inventory.Domain;
+﻿using Inventory.Domain.Models;
 using Inventory.Infrastructure.Persistence.Entities;
 using System;
 using System.Collections.Generic;
@@ -11,9 +11,17 @@ namespace Inventory.Infrastructure.Persistence.Mappers
         public static InventoryMutation ToDomain(this InventoryMutationEntity entity)
         {
             var item = InventoryItem.Create(entity.Item.Id, entity.Item.Name);
-            var quantity = Quantity.Create(entity.QuantityValue, entity.QuantityUnit);
 
-            return InventoryMutation.Restore(item, quantity, entity.Type, entity.CreatedAt);
+            Quantity? oldQuantity = null;
+
+            if (entity.OldQuantityValue is not null && entity.OldQuantityUnit is not null)
+            {
+                oldQuantity = Quantity.Create(entity.OldQuantityValue.Value, entity.OldQuantityUnit);
+            }
+
+            var newQuantity = Quantity.Create(entity.NewQuantityValue, entity.NewQuantityUnit);
+
+            return InventoryMutation.Restore(item, oldQuantity, newQuantity, entity.Type, entity.CreatedAt);
         }
         
         public static InventoryMutationEntity ToEntity(this InventoryMutation mutation)
@@ -21,10 +29,12 @@ namespace Inventory.Infrastructure.Persistence.Mappers
             return new InventoryMutationEntity
             {
                 ItemId = mutation.Item.Id,
-                QuantityValue = mutation.Quantity.Value,
-                QuantityUnit = mutation.Quantity.Unit,
+                OldQuantityValue = mutation.OldQuantity?.Value,
+                OldQuantityUnit = mutation.OldQuantity?.Unit,
+                NewQuantityValue = mutation.NewQuantity.Value,
+                NewQuantityUnit = mutation.NewQuantity.Unit,
                 Type = mutation.Type,
-                CreatedAt = mutation.CreatedAt,
+                CreatedAt = mutation.CreatedAtUtc,
             };
         }
     }

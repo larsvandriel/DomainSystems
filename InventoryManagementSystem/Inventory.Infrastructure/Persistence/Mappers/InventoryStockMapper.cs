@@ -1,4 +1,4 @@
-﻿using Inventory.Domain;
+﻿using Inventory.Domain.Models;
 using Inventory.Infrastructure.Persistence.Entities;
 using System;
 using System.Collections.Generic;

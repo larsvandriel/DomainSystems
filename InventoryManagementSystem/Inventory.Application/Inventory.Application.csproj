@@ -9,7 +9,10 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\CommonLibraries\Common.Messaging.Abstractions\Common.Messaging.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\Common\CommonLibraries\Common.Messaging.Async\Common.Messaging.Async.csproj" />
-    <ProjectReference Include="..\..\..\Common\CommonLibraries\Common.Persistence.Abstractions\Common.Persistence.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\Common\CommonLibraries\Common.Optional\Common.Optional.csproj" />
+    <ProjectReference Include="..\..\..\Common\CommonLibraries\Common.Persistence.Concurrency\Common.Persistence.Concurrency.csproj" />
+    <ProjectReference Include="..\..\..\Common\CommonLibraries\Common.Persistence.Resilience\Common.Persistence.Resilience.csproj" />
+    <ProjectReference Include="..\..\..\Common\CommonLibraries\Common.Persistence.Transactions\Common.Persistence.Transactions.csproj" />
     <ProjectReference Include="..\..\..\Common\CommonLibraries\Common.Results\Common.Results.csproj" />
     <ProjectReference Include="..\Inventory.Domain\Inventory.Domain.csproj" />
   </ItemGroup>

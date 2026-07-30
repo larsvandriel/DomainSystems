@@ -1,4 +1,4 @@
-﻿using Inventory.Domain;
+﻿using Inventory.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,8 +12,11 @@ namespace Inventory.Infrastructure.Persistence.Entities
         public Guid ItemId { get; set; }
         public InventoryItemEntity Item { get; set; } = null!;
 
-        public decimal QuantityValue { get; set; }
-        public string QuantityUnit { get; set; } = string.Empty;
+        public decimal? OldQuantityValue { get; set; } = null;
+        public string? OldQuantityUnit { get; set; } = null;
+
+        public decimal NewQuantityValue { get; set; }
+        public string NewQuantityUnit { get; set; } = string.Empty;
 
         public InventoryMutationType Type { get; set; }
         public DateTimeOffset CreatedAt { get; set; }

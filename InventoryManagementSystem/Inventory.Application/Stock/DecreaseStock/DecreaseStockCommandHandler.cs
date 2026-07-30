@@ -1,62 +1,51 @@
 ﻿using Common.Messaging.Abstractions.Requests;
-using Common.Persistence.Abstractions;
+using Common.Persistence.Resilience.Execution;
 using Common.Results;
-using Inventory.Application.Abstractions;
-using Inventory.Domain;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Inventory.Application.Stock.Services;
 
 namespace Inventory.Application.Stock.DecreaseStock
 {
-    public sealed class DecreaseStockCommandHandler(
-        ITransactionalExecutor transactionalExecutor,
-        IUnitConverter unitConverter,
-        IInventoryStockRepository stockRepository,
-        IInventoryItemRepository itemRepository,
-        IInventoryMutationRepository mutationRepository) : IRequestHandler<DecreaseStockCommand, Result>
+    public sealed class DecreaseStockCommandHandler(IResilientTransactionalExecutor transactionalExecutor) : IRequestHandler<DecreaseStockCommand, Result>
     {
-        private readonly ITransactionalExecutor _transactionExecutor = transactionalExecutor;
-        private readonly IUnitConverter _unitConverter = unitConverter;
-        private readonly IInventoryStockRepository _stockRepository = stockRepository;
-        private readonly IInventoryItemRepository _itemRepository = itemRepository;
-        private readonly IInventoryMutationRepository _mutationRepository = mutationRepository;
+        private readonly IResilientTransactionalExecutor _transactionExecutor = transactionalExecutor;
 
-        public Task<Result> HandleAsync(DecreaseStockCommand request, CancellationToken cancellationToken = default)
+        public async Task<Result> HandleAsync(DecreaseStockCommand request, CancellationToken cancellationToken = default)
         {
-            return _transactionExecutor.ExecuteAsync(async ct =>
+            var validationErrors = Validate(request);
+
+            if (validationErrors.Any)
             {
-                var item = await _itemRepository.GetByIdAsync(request.ItemId, ct);
+                return Result.Failure(ProblemDetailsFactory.CreateValidation(
+                    "error:InvalidDecreaseStock",
+                    "One or more validation errors occurred.",
+                    validationErrors.ToDictionary()));
+            }
+            
+            return await _transactionExecutor.ExecuteAsync<IStockMutationService>((stockMutationService, ct) =>
+                stockMutationService.DecreaseAsync(request.ItemId, request.ItemName, request.Amount, request.Unit, ct),
+                cancellationToken);
+        }
 
-                if (item is null)
-                {
-                    item = InventoryItem.Create(request.ItemId, request.ItemName);
-                    await _itemRepository.AddAsync(item, ct);
-                }
-
-                var quantity = Quantity.Create(request.Amount, request.Unit);
-
-                var stock = await _stockRepository.GetByItemIdAsync(request.ItemId, ct);
-
-                if (stock is null)
-                {
-                    stock = InventoryStock.Create(item, Quantity.Create(0, request.Unit));
-                    stock.Decrease(quantity, _unitConverter);
-
-                    await _stockRepository.AddAsync(stock, ct);
-                }
-                else
-                {
-                    stock.Decrease(quantity, _unitConverter);
-                    await _stockRepository.UpdateAsync(stock, ct);
-                }
-
-                foreach (var mutation in stock.DequeueMutations())
-                {
-                    await _mutationRepository.AddAsync(mutation, ct);
-                }
-
-                return Result.Success();
-            }, cancellationToken);        }
+        private static ValidationErrors Validate(DecreaseStockCommand request)
+        {
+            var errors = new ValidationErrors();
+            if(request.ItemId == Guid.Empty)
+            {
+                errors.Add(nameof(request.ItemId), "ItemId must not be empty.");
+            }
+            if(string.IsNullOrWhiteSpace(request.ItemName))
+            {
+                errors.Add(nameof(request.ItemName), "ItemName must not be empty.");
+            }
+            if (request.Amount <= 0)
+            {
+                errors.Add(nameof(request.Amount), "Amount must be greater than zero.");
+            }
+            if (string.IsNullOrWhiteSpace(request.Unit))
+            {
+                errors.Add(nameof(request.Unit), "Unit must not be empty.");
+            }
+            return errors;
+        }
     }
 }

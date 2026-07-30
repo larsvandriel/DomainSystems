@@ -1,7 +1,7 @@
 ﻿using Common.Messaging.Abstractions.Requests;
 using Common.Results;
 using Inventory.Application.Abstractions;
-using Inventory.Domain;
+using Inventory.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;

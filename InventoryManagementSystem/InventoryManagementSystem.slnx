@@ -1,6 +1,10 @@
 <Solution>
   <Folder Name="/Common/">
-    <Project Path="../../Common/CommonLibraries/Common.Persistence.Abstractions/Common.Persistence.Abstractions.csproj" />
+    <Project Path="../../Common/CommonLibraries/Common.Optional/Common.Optional.csproj" />
+    <Project Path="../../Common/CommonLibraries/Common.Persistence.Concurrency/Common.Persistence.Concurrency.csproj" />
+    <Project Path="../../Common/CommonLibraries/Common.Persistence.EntityFramework.SqlServer/Common.Persistence.EntityFramework.SqlServer.csproj" />
+    <Project Path="../../Common/CommonLibraries/Common.Persistence.Resilience/Common.Persistence.Resilience.csproj" />
+    <Project Path="../../Common/CommonLibraries/Common.Persistence.Transactions/Common.Persistence.Transactions.csproj" />
     <Project Path="D:/larsv/Documents/Projects/Common/CommonLibraries/Common.Messaging.Abstractions/Common.Messaging.Abstractions.csproj" />
     <Project Path="D:/larsv/Documents/Projects/Common/CommonLibraries/Common.Messaging.Async/Common.Messaging.Async.csproj" />
     <Project Path="D:/larsv/Documents/Projects/Common/CommonLibraries/Common.Resilience.SqlServer/Common.Resilience.SqlServer.csproj" />

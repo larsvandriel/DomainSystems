@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Inventory.Domain
+namespace Inventory.Domain.Models
 {
     public sealed class InventoryItem
     {

@@ -1,7 +1,7 @@
 ﻿using Common.Messaging.Abstractions.Requests;
 using Common.Results;
 using Inventory.Application.Abstractions;
-using Inventory.Domain;
+using Inventory.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,14 +16,15 @@ namespace Inventory.Application.Stock.GetStock
         {
             ArgumentNullException.ThrowIfNull(request, nameof(request));
 
-            var result = await _stockRepository.GetByItemIdAsync(request.ItemId, cancellationToken);
+            var snapshot = await _stockRepository.GetByItemIdAsync(request.ItemId, cancellationToken);
 
-            if(result is null)
+            if(snapshot is null)
             {
-                return Result<InventoryStock>.Failure("Stock not found.");
+                return Result<InventoryStock>.Failure(
+                    ProblemDetailsFactory.NotFound("error: InventoryNotFound", $"Could not find an inventory for item with itemId '{request.ItemId}'"));
             }
 
-            return Result<InventoryStock>.Success(result);
+            return Result<InventoryStock>.Success(snapshot.Value);
         }
     }
 }

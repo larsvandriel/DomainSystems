@@ -20,6 +20,8 @@ namespace Inventory.Infrastructure.Persistence.Configurations
             builder.Property(x => x.QuantityValue).HasPrecision(18, 4).IsRequired();
 
             builder.Property(x => x.QuantityUnit).HasMaxLength(20).IsRequired();
+
+            builder.Property(x => x.RowVersion).IsRowVersion();
         }
     }
 }
