@@ -1,0 +1,46 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Foundation/">
+    <Project Path="Foundation/Common.Optional/Common.Optional.csproj" />
+  </Folder>
+  <Folder Name="/src/Messaging/">
+    <Project Path="Messaging/Common.Messaging.Abstractions/Common.Messaging.Abstractions.csproj" />
+    <Project Path="Messaging/Common.Messaging.Async/Common.Messaging.Async.csproj" />
+    <Project Path="Messaging/Common.Messaging.Integration.Contracts/Common.Messaging.Integration.Contracts.csproj" />
+    <Project Path="Messaging/Common.Messaging.Sync/Common.Messaging.Sync.csproj" />
+    <Project Path="Messaging/Common.Messaging.Transactional/Common.Messaging.Transactional.csproj" />
+  </Folder>
+  <Folder Name="/src/Messaging/Inbox/">
+    <Project Path="Messaging/Common.Messaging.Inbox.Contracts/Common.Messaging.Inbox.Contracts.csproj" />
+    <Project Path="Messaging/Common.Messaging.Inbox.EntityFrameworkCore/Common.Messaging.Inbox.EntityFrameworkCore.csproj" />
+    <Project Path="Messaging/Common.Messaging.Inbox/Common.Messaging.Inbox.csproj" />
+  </Folder>
+  <Folder Name="/src/Messaging/Outbox/">
+    <Project Path="Messaging/Common.Messaging.Outbox.Contracts/Common.Messaging.Outbox.Contracts.csproj" />
+    <Project Path="Messaging/Common.Messaging.Outbox.EntityFrameworkCore/Common.Messaging.Outbox.EntityFrameworkCore.csproj" />
+    <Project Path="Messaging/Common.Messaging.Outbox/Common.Messaging.Outbox.csproj" />
+  </Folder>
+  <Folder Name="/src/Persistence/" />
+  <Folder Name="/src/Persistence/Concurrency/">
+    <Project Path="Persistence/Common.Persistence.Concurrency/Common.Persistence.Concurrency.csproj" />
+  </Folder>
+  <Folder Name="/src/Persistence/Entity Framework Core/">
+    <Project Path="Persistence/Common.Persistence.EntityFrameworkCore.SqlServer/Common.Persistence.EntityFrameworkCore.SqlServer.csproj" />
+    <Project Path="Persistence/Common.Persistence.EntityFrameworkCore/Common.Persistence.EntityFrameworkCore.csproj" />
+  </Folder>
+  <Folder Name="/src/Persistence/Transactional Resilience/">
+    <Project Path="Persistence/Common.Persistence.Resilience.SqlServer/Common.Persistence.Resilience.SqlServer.csproj" />
+    <Project Path="Persistence/Common.Persistence.Resilience/Common.Persistence.Resilience.csproj" />
+  </Folder>
+  <Folder Name="/src/Persistence/Transactions/">
+    <Project Path="Persistence/Common.Persistence.Transactions/Common.Persistence.Transactions.csproj" />
+  </Folder>
+  <Folder Name="/src/Resilience/">
+    <Project Path="Resilience/Common.Resilience.SqlServer/Common.Resilience.SqlServer.csproj" />
+    <Project Path="Resilience/Common.Resilience/Common.Resilience.csproj" />
+  </Folder>
+  <Folder Name="/src/Results/">
+    <Project Path="Results/Common.Results.AspNetCore/Common.Results.AspNetCore.csproj" />
+    <Project Path="Results/Common.Results/Common.Results.csproj" />
+  </Folder>
+</Solution>
