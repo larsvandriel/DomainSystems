@@ -1,0 +1,14 @@
+﻿using Common.Results;
+using Inventory.Domain.Models;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Inventory.Application.Abstractions
+{
+    public interface IInventoryMutationRepository
+    {
+        Task AddAsync(InventoryMutation mutation, CancellationToken cancellationToken);
+        Task<IReadOnlyList<InventoryMutation>> GetAllByItemIdAsync(Guid itemId, CancellationToken cancellationToken);
+    }
+}
