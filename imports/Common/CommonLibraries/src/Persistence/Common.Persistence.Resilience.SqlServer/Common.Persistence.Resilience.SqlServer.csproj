@@ -1,0 +1,6 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\Resilience\Common.Resilience.SqlServer\Common.Resilience.SqlServer.csproj" />
+    <ProjectReference Include="..\Common.Persistence.Resilience\Common.Persistence.Resilience.csproj" />
+  </ItemGroup>
+</Project>

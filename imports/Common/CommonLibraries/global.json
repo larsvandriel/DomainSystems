@@ -1,0 +1,6 @@
+{
+  "sdk": {
+    "verion": "10.0.300",
+    "rollForward": "latestPatch"
+  }
+}

@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Persistence\Common.Persistence.Resilience\Common.Persistence.Resilience.csproj" />
+    <ProjectReference Include="..\Common.Messaging.Abstractions\Common.Messaging.Abstractions.csproj" />
+  </ItemGroup>
+</Project>
