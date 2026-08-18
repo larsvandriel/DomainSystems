@@ -1,19 +1,14 @@
-﻿using Common.Persistence.Concurrency;
-using Common.Resilience;
+using Common.Persistence.Concurrency;
 using Inventory.Application.Abstractions;
-using Inventory.Application.Reservations.Enums;
-using Inventory.Application.Reservations.Models;
-using Inventory.Domain.Enums;
 using Inventory.Domain.Models;
 using Inventory.Infrastructure.Persistence.Mappers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Infrastructure.Persistence.Repositories
 {
-    public sealed class InventoryReservationRepository(InventoryDbContext dbContext, IRetryPolicy retryPolicy) : IInventoryReservationRepository
+    public sealed class InventoryReservationRepository(InventoryDbContext dbContext) : IInventoryReservationRepository
     {
         private readonly InventoryDbContext _dbContext = dbContext;
-        private readonly IRetryPolicy _retryPolicy = retryPolicy;
 
         public async Task AddAsync(InventoryReservation reservation, CancellationToken cancellationToken)
         {
@@ -22,39 +17,12 @@ namespace Inventory.Infrastructure.Persistence.Repositories
             await _dbContext.InventoryReservations.AddAsync(reservation.ToEntity(), cancellationToken);
         }
 
-        public async Task<IReadOnlyList<InventoryReservation>> GetAsync(ReservationQueryFilter filter, DateTimeOffset activeAt, CancellationToken cancellationToken)
-        {
-            var query = _dbContext.InventoryReservations.AsNoTracking().Include(x => x.Item).AsQueryable();
-
-            if (filter.ItemId is { } itemId)
-            {
-                query = query.Where(x => x.ItemId == itemId);
-            }
-
-            if (!string.IsNullOrWhiteSpace(filter.ItemName))
-            {
-                var itemName = filter.ItemName.Trim();
-                query = query.Where(x => x.Item.Name.Contains(itemName));
-            }
-
-            if (filter.Selection == ReservationSelection.Active)
-            {
-                query = query.Where(x => x.Status == ReservationStatus.Open && (x.ExpiresAt == null || x.ExpiresAt > activeAt));
-            }
-
-            var result = await _retryPolicy.ExecuteAsync(ct => query.OrderByDescending(x => x.CreatedAt).ThenBy(x => x.Id).ToListAsync(ct), cancellationToken);
-
-            return result.Select(x => x.ToDomain()).ToList().AsReadOnly();
-        }
-
         public async Task<ConcurrencySnapshot<InventoryReservation>?> GetByIdAsync(Guid reservationId, CancellationToken cancellationToken)
         {
-            var entity = await _retryPolicy.ExecuteAsync(
-                ct => _dbContext.InventoryReservations.AsNoTracking()
+            var entity = await _dbContext.InventoryReservations.AsNoTracking()
                     .Include(x => x.Item)
                     .Where(x => x.Id == reservationId)
-                    .FirstOrDefaultAsync(ct),
-                cancellationToken);
+                    .FirstOrDefaultAsync(cancellationToken);
 
             if (entity == null)
                 return null;
@@ -64,15 +32,14 @@ namespace Inventory.Infrastructure.Persistence.Repositories
 
         public async Task<InventoryReservation?> GetByReference(string reference, CancellationToken cancellationToken)
         {
-            var result = await _retryPolicy.ExecuteAsync(
-                ct => _dbContext.InventoryReservations.AsNoTracking()
+            var result = await _dbContext.InventoryReservations.AsNoTracking()
                     .Include(x => x.Item)
                     .Where(x => x.Reference == reference)
-                    .FirstOrDefaultAsync(ct),
-                cancellationToken);
+                    .FirstOrDefaultAsync(cancellationToken);
 
             return result?.ToDomain();
         }
+
 
         public async Task UpdateAsync(InventoryReservation reservation, ConcurrencyToken concurrencyToken, CancellationToken cancellationToken)
         {

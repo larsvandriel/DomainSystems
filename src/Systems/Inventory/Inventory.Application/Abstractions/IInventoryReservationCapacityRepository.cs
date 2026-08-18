@@ -1,8 +1,5 @@
-﻿using Common.Persistence.Concurrency;
+using Common.Persistence.Concurrency;
 using Inventory.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Inventory.Application.Abstractions
 {

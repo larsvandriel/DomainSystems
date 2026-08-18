@@ -1,7 +1,4 @@
-﻿using Inventory.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Inventory.Domain.Enums;
 
 namespace Inventory.Infrastructure.Persistence.Entities
 {
@@ -12,8 +9,8 @@ namespace Inventory.Infrastructure.Persistence.Entities
         public Guid ItemId { get; set; }
         public InventoryItemEntity Item { get; set; } = null!;
 
-        public decimal? OldQuantityValue { get; set; } = null;
-        public string? OldQuantityUnit { get; set; } = null;
+        public decimal? OldQuantityValue { get; set; }
+        public string? OldQuantityUnit { get; set; }
 
         public decimal NewQuantityValue { get; set; }
         public string NewQuantityUnit { get; set; } = string.Empty;

@@ -1,12 +1,9 @@
-﻿using Common.Persistence.Concurrency;
+using Common.Persistence.Concurrency;
 using Common.Results;
+using Common.Results.Problems;
 using Inventory.Application.Abstractions;
 using Inventory.Application.Stock.ApplyStockCount;
-using Inventory.Domain.Enums;
 using Inventory.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Inventory.Application.Stock.Services
 {
@@ -55,7 +52,7 @@ namespace Inventory.Application.Stock.Services
         public async Task<Result> AdjustAsync(StockCountLine line, CancellationToken cancellationToken = default)
         {
             if(line.CountedAmount < 0)
-                return Result.Failure(ProblemDetailsFactory.BusinessRule("error:AdjustStockNegativeAmount", "The stock adjustment must set the amount to a positive or zero value."));
+                return Result.Failure(ProblemFactory.BusinessRule("error:AdjustStockNegativeAmount", "The stock adjustment must set the amount to a positive or zero value."));
 
             var (stock, concurrencyToken) = await GetOrCreateStockAsync(line.ItemId, line.ItemName, line.Unit, cancellationToken);
 

@@ -1,5 +1,4 @@
-﻿using Inventory.Domain.Enums;
-using System.Collections;
+using Inventory.Domain.Enums;
 
 namespace Inventory.Domain.Models
 {

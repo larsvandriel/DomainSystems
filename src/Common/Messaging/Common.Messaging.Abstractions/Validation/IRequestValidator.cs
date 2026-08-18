@@ -6,6 +6,6 @@ namespace Common.Messaging.Abstractions.Validation
 {
     public interface IRequestValidator<in TRequest>
     {
-        ValueTask<IReadOnlyCollection<ValidationFailure>> ValidateAsync(TRequest request, CancellationToken cancellationToken = default);
+        ValueTask<ValidationResult> ValidateAsync(TRequest request, CancellationToken cancellationToken = default);
     }
 }

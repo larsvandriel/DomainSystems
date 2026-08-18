@@ -1,8 +1,5 @@
-﻿using Inventory.Domain.Models;
+using Inventory.Domain.Models;
 using Inventory.Infrastructure.Persistence.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Inventory.Infrastructure.Persistence.Mappers
 {

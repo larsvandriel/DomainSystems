@@ -1,20 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Common\CommonLibraries\Common.Messaging.Abstractions\Common.Messaging.Abstractions.csproj" />
-    <ProjectReference Include="..\..\..\Common\CommonLibraries\Common.Messaging.Async\Common.Messaging.Async.csproj" />
-    <ProjectReference Include="..\..\..\Common\CommonLibraries\Common.Optional\Common.Optional.csproj" />
-    <ProjectReference Include="..\..\..\Common\CommonLibraries\Common.Persistence.Concurrency\Common.Persistence.Concurrency.csproj" />
-    <ProjectReference Include="..\..\..\Common\CommonLibraries\Common.Persistence.Resilience\Common.Persistence.Resilience.csproj" />
-    <ProjectReference Include="..\..\..\Common\CommonLibraries\Common.Persistence.Transactions\Common.Persistence.Transactions.csproj" />
-    <ProjectReference Include="..\..\..\Common\CommonLibraries\Common.Results\Common.Results.csproj" />
+    <ProjectReference Include="..\..\..\Common\Foundation\Common.Optional\Common.Optional.csproj" />
+    <ProjectReference Include="..\..\..\Common\Messaging\Common.Messaging.Abstractions\Common.Messaging.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\Common\Messaging\Common.Messaging.Async\Common.Messaging.Async.csproj" />
+    <ProjectReference Include="..\..\..\Common\Pagination\Common.Pagination\Common.Pagination.csproj" />
+    <ProjectReference Include="..\..\..\Common\Persistence\Common.Persistence.Concurrency\Common.Persistence.Concurrency.csproj" />
+    <ProjectReference Include="..\..\..\Common\Persistence\Common.Persistence.Resilience\Common.Persistence.Resilience.csproj" />
+    <ProjectReference Include="..\..\..\Common\Persistence\Common.Persistence.Transactions\Common.Persistence.Transactions.csproj" />
+    <ProjectReference Include="..\..\..\Common\Results\Common.Results\Common.Results.csproj" />
     <ProjectReference Include="..\Inventory.Domain\Inventory.Domain.csproj" />
   </ItemGroup>
-
 </Project>

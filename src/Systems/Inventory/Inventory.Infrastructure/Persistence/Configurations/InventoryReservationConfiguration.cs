@@ -1,9 +1,6 @@
-﻿using Inventory.Infrastructure.Persistence.Entities;
+using Inventory.Infrastructure.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Inventory.Infrastructure.Persistence.Configurations
 {

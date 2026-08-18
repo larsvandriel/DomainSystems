@@ -7,6 +7,13 @@
     <File Path="../../global.json" />
   </Folder>
   <Folder Name="/src/" />
+  <Folder Name="/src/Caching/">
+    <Project Path="Caching/Common.Caching/Common.Caching.csproj" Id="1843c0d9-fa7d-4914-9aad-e27928b4dd6f" />
+  </Folder>
+  <Folder Name="/src/Collections/" />
+  <Folder Name="/src/Collections/Registry/">
+    <Project Path="Collections/Common.Registry/Common.Registry.csproj" Id="341170d2-8769-4b9a-b6df-d1b41419bd52" />
+  </Folder>
   <Folder Name="/src/Foundation/">
     <Project Path="Foundation/Common.Optional/Common.Optional.csproj" />
   </Folder>
@@ -26,6 +33,9 @@
     <Project Path="Messaging/Common.Messaging.Outbox.Contracts/Common.Messaging.Outbox.Contracts.csproj" />
     <Project Path="Messaging/Common.Messaging.Outbox.EntityFrameworkCore/Common.Messaging.Outbox.EntityFrameworkCore.csproj" />
     <Project Path="Messaging/Common.Messaging.Outbox/Common.Messaging.Outbox.csproj" />
+  </Folder>
+  <Folder Name="/src/Pagination/">
+    <Project Path="Pagination/Common.Pagination/Common.Pagination.csproj" Id="f7c8489d-6677-4228-a8dd-4f846d60e42e" />
   </Folder>
   <Folder Name="/src/Persistence/" />
   <Folder Name="/src/Persistence/Concurrency/">

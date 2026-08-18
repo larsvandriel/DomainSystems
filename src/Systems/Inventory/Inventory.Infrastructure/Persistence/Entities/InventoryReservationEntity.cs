@@ -1,8 +1,4 @@
-﻿using Inventory.Domain.Enums;
-using Inventory.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Inventory.Domain.Enums;
 
 namespace Inventory.Infrastructure.Persistence.Entities
 {

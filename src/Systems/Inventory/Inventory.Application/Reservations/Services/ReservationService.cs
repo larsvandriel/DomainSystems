@@ -1,6 +1,7 @@
-﻿using Common.Optional;
+using Common.Optional;
 using Common.Persistence.Concurrency;
 using Common.Results;
+using Common.Results.Problems;
 using Inventory.Application.Abstractions;
 using Inventory.Application.Stock.Services;
 using Inventory.Domain.Enums;
@@ -30,37 +31,33 @@ namespace Inventory.Application.Reservations.Services
             var reservationSnapshot = await _reservationRepository.GetByIdAsync(reservationId, cancellationToken);
 
             if (reservationSnapshot is null)
-                return Result.Failure(ProblemDetailsFactory.NotFound(
-                    type: "error:ReservationNotFound",
+                return Result.Failure(ProblemFactory.NotFound(
+                    code: "error:ReservationNotFound",
                     detail: "Tried to update reservation, but the reservation was not found."));
 
             var reservation = reservationSnapshot.Value;
 
             if (reservation.Status != ReservationStatus.Open)
-                return Result.Failure(ProblemDetailsFactory.BusinessRule(
-                    "error:AdjustmentClosedReservation",
-                    $"The reservation with reference {reservation.Reference} was already closed."));
+                return Result.Failure(ProblemFactory.BusinessRule(
+                    code: "error:AdjustmentClosedReservation",
+                    detail: $"The reservation with reference {reservation.Reference} was already closed."));
 
             if (reservation.ExpiresAt <= DateTimeOffset.UtcNow)
-                return Result.Failure(ProblemDetailsFactory.BusinessRule(
-                    "error:AdjustExpiredReservation",
-                    $"The reservation with reference {reservation.Reference} has already expired."));
+                return Result.Failure(ProblemFactory.BusinessRule(
+                    code: "error:AdjustExpiredReservation",
+                    detail: $"The reservation with reference {reservation.Reference} has already expired."));
 
             if (requestedQuantity is not null)
             {
                 var stockSnapshot = await _stockRepository.GetByItemIdAsync(reservation.Item.Id, cancellationToken);
 
                 if (stockSnapshot is null)
-                    return Result.Failure(ProblemDetailsFactory.BusinessRule(
-                        type: "error:InventoryStockNotFound",
+                    return Result.Failure(ProblemFactory.BusinessRule(
+                        code: "error:InventoryStockNotFound",
                         detail: $"Stock for item '{reservation.Item.Id}' was not found."));
 
-                var capacitySnapshot = await _capacityRepository.GetByItemIdAsync(reservation.Item.Id, cancellationToken);
-
-                if (capacitySnapshot is null)
-                    return Result.Failure(ProblemDetailsFactory.Unexpected(
-                        exception: new InvalidOperationException("Reservation capacity is missing."),
-                        detail: "The reservation capacity is inconsistent."));
+                var capacitySnapshot = await _capacityRepository.GetByItemIdAsync(reservation.Item.Id, cancellationToken)
+                    ?? throw new InvalidOperationException($"Reservation capacity for item '{reservation.Item.Id}' is missing.");
 
                 var oldQuantityResult = _quantityNormalizer.NormalizeTo(reservation.Quantity, capacitySnapshot.Value.ReservedQuantity.Unit);
 
@@ -83,9 +80,9 @@ namespace Inventory.Application.Reservations.Services
                     return proposedReservedResult;
 
                 if (!stockSnapshot.Value.Quantity.IsGreaterThanOrSame(proposedReservedResult.Value))
-                    return Result.Failure(ProblemDetailsFactory.BusinessRule(
-                        type: "error:InsufficientStock",
-                        "The requested quantity exceeds available stock."));
+                    return Result.Failure(ProblemFactory.BusinessRule(
+                        code: "error:InsufficientStock",
+                        detail: "The requested quantity exceeds available stock."));
 
                 capacitySnapshot.Value.Adjust(oldQuantityResult.Value, newQuantityResult.Value);
 
@@ -98,8 +95,8 @@ namespace Inventory.Application.Reservations.Services
             {
                 var foundReservation = await _reservationRepository.GetByReference(reference, cancellationToken);
                 if (foundReservation is not null && foundReservation.Id != reservation.Id)
-                    return Result.Failure(ProblemDetailsFactory.Conflict(
-                        type: "error:ReservationReferenceAlreadyExists",
+                    return Result.Failure(ProblemFactory.Conflict(
+                        code: "error:ReservationReferenceAlreadyExists",
                         detail: $"There is already an reservation with reference '{reference}'."));
 
                 reservation.AdjustReference(reference);
@@ -120,28 +117,24 @@ namespace Inventory.Application.Reservations.Services
             var reservationSnapshot = await _reservationRepository.GetByIdAsync(reservationId, cancellationToken);
 
             if (reservationSnapshot == null)
-                return Result.Failure(ProblemDetailsFactory.NotFound(
-                    "error:ReservationNotFound",
-                    $"The reservation with id {reservationId} was not found."));
+                return Result.Failure(ProblemFactory.NotFound(
+                    code: "error:ReservationNotFound",
+                    detail: $"The reservation with id {reservationId} was not found."));
 
             var reservation = reservationSnapshot.Value;
 
             if (reservation.Status != ReservationStatus.Open)
-                return Result.Failure(ProblemDetailsFactory.BusinessRule(
-                    "error:AdjustmentClosedReservation",
-                    $"The reservation with reference {reservation.Reference} was already closed."));
+                return Result.Failure(ProblemFactory.BusinessRule(
+                    code: "error:AdjustmentClosedReservation",
+                    detail: $"The reservation with reference {reservation.Reference} was already closed."));
 
             if (reservation.ExpiresAt <= DateTimeOffset.UtcNow)
-                return Result.Failure(ProblemDetailsFactory.BusinessRule(
-                    "error:CancelExpiredReservation",
-                    $"The reservation with reference {reservation.Reference} has already expired."));
+                return Result.Failure(ProblemFactory.BusinessRule(
+                    code: "error:CancelExpiredReservation",
+                    detail: $"The reservation with reference {reservation.Reference} has already expired."));
 
-            var capacitySnapshot = await _capacityRepository.GetByItemIdAsync(reservation.Item.Id, cancellationToken);
-
-            if (capacitySnapshot is null)
-                return Result.Failure(ProblemDetailsFactory.Unexpected(
-                        exception: new InvalidOperationException("Reservation capacity is missing."),
-                        detail: "The reservation capacity is inconsistent."));
+            var capacitySnapshot = await _capacityRepository.GetByItemIdAsync(reservation.Item.Id, cancellationToken)
+                ?? throw new InvalidOperationException($"Reservation capacity for item '{reservation.Item.Id}' is missing.");
 
             var normalizedResult = _quantityNormalizer.NormalizeTo(reservation.Quantity, capacitySnapshot.Value.ReservedQuantity.Unit);
 
@@ -163,28 +156,24 @@ namespace Inventory.Application.Reservations.Services
             var reservationSnapshot = await _reservationRepository.GetByIdAsync(reservationId, cancellationToken);
 
             if (reservationSnapshot == null)
-                return Result.Failure(ProblemDetailsFactory.NotFound(
-                    "error:ReservationNotFound",
-                    $"The reservation with id {reservationId} was not found."));
+                return Result.Failure(ProblemFactory.NotFound(
+                    code: "error:ReservationNotFound",
+                    detail: $"The reservation with id {reservationId} was not found."));
 
             var reservation = reservationSnapshot.Value;
 
             if (reservation.Status != ReservationStatus.Open)
-                return Result.Failure(ProblemDetailsFactory.BusinessRule(
-                    "error:AdjustmentClosedReservation",
-                    $"The reservation with reference {reservation.Reference} was already closed."));
+                return Result.Failure(ProblemFactory.BusinessRule(
+                    code: "error:AdjustmentClosedReservation",
+                    detail: $"The reservation with reference {reservation.Reference} was already closed."));
 
             if (reservation.ExpiresAt <= DateTimeOffset.UtcNow)
-                return Result.Failure(ProblemDetailsFactory.BusinessRule(
-                    "error:CommitExpiredReservation",
-                    $"The reservation with reference {reservation.Reference} has already expired."));
+                return Result.Failure(ProblemFactory.BusinessRule(
+                    code: "error:CommitExpiredReservation",
+                    detail: $"The reservation with reference {reservation.Reference} has already expired."));
 
-            var capacitySnapshot = await _capacityRepository.GetByItemIdAsync(reservation.Item.Id, cancellationToken);
-
-            if (capacitySnapshot is null)
-                return Result.Failure(ProblemDetailsFactory.Unexpected(
-                        exception: new InvalidOperationException("Reservation capacity is missing."),
-                        detail: "The reservation capacity is inconsistent."));
+            var capacitySnapshot = await _capacityRepository.GetByItemIdAsync(reservation.Item.Id, cancellationToken)
+                ?? throw new InvalidOperationException($"Reservation capacity for item {reservation.Item.Id} is missing.");
 
             var normalizedResult = _quantityNormalizer.NormalizeTo(reservation.Quantity, capacitySnapshot.Value.ReservedQuantity.Unit);
 
@@ -216,15 +205,15 @@ namespace Inventory.Application.Reservations.Services
             var inventoryItem = await _itemRepository.GetByIdAsync(itemId, cancellationToken);
 
             if (inventoryItem is null)
-                return Result.Failure(ProblemDetailsFactory.BusinessRule(
-                    type: "error:CreateReservationForNonExistingStock",
+                return Result.Failure(ProblemFactory.BusinessRule(
+                    code: "error:CreateReservationForNonExistingStock",
                     detail: "Tried to create reservation while stock was not found."));
 
             var stockSnapshot = await _stockRepository.GetByItemIdAsync(itemId, cancellationToken);
 
             if (stockSnapshot is null)
-                return Result.Failure(ProblemDetailsFactory.BusinessRule(
-                    type: "error:InventoryStockNotFound",
+                return Result.Failure(ProblemFactory.BusinessRule(
+                    code: "error:InventoryStockNotFound",
                     $"Stock for item '{itemId}' was not found."));
 
             var stock = stockSnapshot.Value;
@@ -242,8 +231,8 @@ namespace Inventory.Application.Reservations.Services
                 return newReservedResult;
 
             if (!stock.Quantity.IsGreaterThanOrSame(newReservedResult.Value))
-                return Result.Failure(ProblemDetailsFactory.BusinessRule(
-                    type: "error:InsufficientStock",
+                return Result.Failure(ProblemFactory.BusinessRule(
+                    code: "error:InsufficientStock",
                     detail: $"The requested quantity exceeds available stock."));
 
             if (reference is not null)
@@ -251,8 +240,8 @@ namespace Inventory.Application.Reservations.Services
                 var existingReservation = await _reservationRepository.GetByReference(reference, cancellationToken);
 
                 if (existingReservation != null)
-                    return Result.Failure(ProblemDetailsFactory.Conflict(
-                        type: "error:ReservationReferenceAlreadyExists",
+                    return Result.Failure(ProblemFactory.Conflict(
+                        code: "error:ReservationReferenceAlreadyExists",
                         detail: $"There is already an reservation with reference '{reference}'."));
             }
 
@@ -272,36 +261,32 @@ namespace Inventory.Application.Reservations.Services
             var reservationSnapshot = await _reservationRepository.GetByIdAsync(reservationId, cancellationToken);
 
             if (reservationSnapshot == null)
-                return Result.Failure(ProblemDetailsFactory.NotFound(
-                    "error:ReservationNotFound",
-                    $"The reservation with id {reservationId} was not found."));
+                return Result.Failure(ProblemFactory.NotFound(
+                    code: "error:ReservationNotFound",
+                    detail: $"The reservation with id {reservationId} was not found."));
 
             var reservation = reservationSnapshot.Value;
 
             if (reservation.Status != ReservationStatus.Open)
-                return Result.Failure(ProblemDetailsFactory.BusinessRule(
+                return Result.Failure(ProblemFactory.BusinessRule(
                     "error:AdjustmentClosedReservation",
                     $"The reservation with reference {reservation.Reference} was already closed."));
 
             if (reservation.ExpiresAt is null)
             {
                 return Result.Failure(
-                    ProblemDetailsFactory.BusinessRule(
-                        type: "error:ReservationHasNoExpiration",
+                    ProblemFactory.BusinessRule(
+                        code: "error:ReservationHasNoExpiration",
                         detail: "A reservation without an expiration cannot expire."));
             }
 
             if (reservation.ExpiresAt > utcNow)
-                return Result.Failure(ProblemDetailsFactory.BusinessRule(
-                    type: "error:ExpireReservationBeforeExpireTime",
+                return Result.Failure(ProblemFactory.BusinessRule(
+                    code: "error:ExpireReservationBeforeExpireTime",
                     detail: $"The reservation expires at {reservation.ExpiresAt}."));
 
-            var capacitySnapshot = await _capacityRepository.GetByItemIdAsync(reservation.Item.Id, cancellationToken);
-
-            if (capacitySnapshot is null)
-                return Result.Failure(ProblemDetailsFactory.Unexpected(
-                        exception: new InvalidOperationException("Reservation capacity is missing."),
-                        detail: "The reservation capacity is inconsistent."));
+            var capacitySnapshot = await _capacityRepository.GetByItemIdAsync(reservation.Item.Id, cancellationToken)
+                ?? throw new InvalidOperationException($"Reservation capacity for item '{reservation.Item.Id}' is missing.");
 
             var normalizedResult = _quantityNormalizer.NormalizeTo(reservation.Quantity, capacitySnapshot.Value.ReservedQuantity.Unit);
 
@@ -323,28 +308,24 @@ namespace Inventory.Application.Reservations.Services
             var reservationSnapshot = await _reservationRepository.GetByIdAsync(reservationId, cancellationToken);
 
             if (reservationSnapshot == null)
-                return Result.Failure(ProblemDetailsFactory.NotFound(
-                    "error:ReservationNotFound",
-                    $"The reservation with id {reservationId} was not found."));
+                return Result.Failure(ProblemFactory.NotFound(
+                    code: "error:ReservationNotFound",
+                    detail: $"The reservation with id {reservationId} was not found."));
 
             var reservation = reservationSnapshot.Value;
 
             if (reservation.Status != ReservationStatus.Open)
-                return Result.Failure(ProblemDetailsFactory.BusinessRule(
-                    "error:AdjustmentClosedReservation",
-                    $"The reservation with reference {reservation.Reference} was already closed."));
+                return Result.Failure(ProblemFactory.BusinessRule(
+                    code: "error:AdjustmentClosedReservation",
+                    detail: $"The reservation with reference {reservation.Reference} was already closed."));
 
             if (reservation.ExpiresAt <= DateTimeOffset.UtcNow)
-                return Result.Failure(ProblemDetailsFactory.BusinessRule(
-                    "error:ReleaseExpiredReservation",
-                    $"The reservation with reference {reservation.Reference} has already expired."));
+                return Result.Failure(ProblemFactory.BusinessRule(
+                    code: "error:ReleaseExpiredReservation",
+                    detail: $"The reservation with reference {reservation.Reference} has already expired."));
 
-            var capacitySnapshot = await _capacityRepository.GetByItemIdAsync(reservation.Item.Id, cancellationToken);
-
-            if (capacitySnapshot is null)
-                return Result.Failure(ProblemDetailsFactory.Unexpected(
-                        exception: new InvalidOperationException("Reservation capacity is missing."),
-                        detail: "The reservation capacity is inconsistent."));
+            var capacitySnapshot = await _capacityRepository.GetByItemIdAsync(reservation.Item.Id, cancellationToken)
+                ?? throw new InvalidOperationException($"Reservation capacity for item '{reservation.Item.Id}' is missing.");
 
             var normalizedResult = _quantityNormalizer.NormalizeTo(reservation.Quantity, capacitySnapshot.Value.ReservedQuantity.Unit);
 

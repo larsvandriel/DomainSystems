@@ -1,17 +1,12 @@
-﻿using Common.Persistence.Concurrency;
-using Common.Resilience;
+using Common.Persistence.Concurrency;
 using Inventory.Application.Abstractions;
 using Inventory.Domain.Models;
 using Inventory.Infrastructure.Persistence.Mappers;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 
 namespace Inventory.Infrastructure.Persistence.Repositories
 {
-    public sealed class InventoryReservationCapacityRepository(InventoryDbContext dbContext, IRetryPolicy retryPolicy) : IInventoryReservationCapacityRepository
+    public sealed class InventoryReservationCapacityRepository(InventoryDbContext dbContext) : IInventoryReservationCapacityRepository
     {
         public async Task AddAsync(InventoryReservationCapacity capacity, CancellationToken cancellationToken)
         {
@@ -22,26 +17,20 @@ namespace Inventory.Infrastructure.Persistence.Repositories
 
         public async Task<IReadOnlyList<InventoryReservationCapacity>> GetAllAsync(CancellationToken cancellationToken)
         {
-            var entities = await retryPolicy.ExecuteAsync(
-                ct => dbContext.InventoryReservationCapacities
+            var entities = await dbContext.InventoryReservationCapacities
                     .AsNoTracking()
                     .Include(x => x.Item)
-                    .ToListAsync(ct),
-                cancellationToken);
+                    .ToListAsync(cancellationToken);
 
             return [.. entities.Select(x => x.ToDomain())];
         }
 
         public async Task<ConcurrencySnapshot<InventoryReservationCapacity>?> GetByItemIdAsync(Guid itemId, CancellationToken cancellationToken)
         {
-            var entity = await retryPolicy.ExecuteAsync(
-                ct => dbContext.InventoryReservationCapacities
+            var entity = await dbContext.InventoryReservationCapacities
                     .AsNoTracking()
                     .Include(x => x.Item)
-                    .FirstOrDefaultAsync(
-                        x => x.ItemId == itemId,
-                    ct),
-                cancellationToken);
+                    .FirstOrDefaultAsync(x => x.ItemId == itemId, cancellationToken);
 
             if (entity is null)
                 return null;

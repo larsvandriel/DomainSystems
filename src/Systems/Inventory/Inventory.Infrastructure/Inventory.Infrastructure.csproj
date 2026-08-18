@@ -1,21 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.9" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
   </ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Common\CommonLibraries\Common.Persistence.Concurrency\Common.Persistence.Concurrency.csproj" />
-    <ProjectReference Include="..\..\..\Common\CommonLibraries\Common.Persistence.EntityFramework.SqlServer\Common.Persistence.EntityFramework.SqlServer.csproj" />
-    <ProjectReference Include="..\..\..\Common\CommonLibraries\Common.Resilience\Common.Resilience.csproj" />
+    <ProjectReference Include="..\..\..\Common\Persistence\Common.Persistence.Concurrency\Common.Persistence.Concurrency.csproj" />
+    <ProjectReference Include="..\..\..\Common\Persistence\Common.Persistence.EntityFrameworkCore.SqlServer\Common.Persistence.EntityFrameworkCore.SqlServer.csproj" />
+    <ProjectReference Include="..\..\..\Common\Resilience\Common.Resilience\Common.Resilience.csproj" />
     <ProjectReference Include="..\Inventory.Application\Inventory.Application.csproj" />
   </ItemGroup>
-
 </Project>

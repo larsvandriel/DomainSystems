@@ -1,10 +1,8 @@
-﻿using Common.Messaging.Abstractions.Requests;
+using Common.Messaging.Abstractions.Requests;
 using Common.Results;
+using Common.Results.Problems;
 using Inventory.Application.Abstractions;
 using Inventory.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Inventory.Application.Stock.GetStock
 {
@@ -20,11 +18,11 @@ namespace Inventory.Application.Stock.GetStock
 
             if(snapshot is null)
             {
-                return Result<InventoryStock>.Failure(
-                    ProblemDetailsFactory.NotFound("error: InventoryNotFound", $"Could not find an inventory for item with itemId '{request.ItemId}'"));
+                return Result.Failure<InventoryStock>(
+                    ProblemFactory.NotFound("error: InventoryNotFound", $"Could not find an inventory for item with itemId '{request.ItemId}'"));
             }
 
-            return Result<InventoryStock>.Success(snapshot.Value);
+            return Result.Success(snapshot.Value);
         }
     }
 }

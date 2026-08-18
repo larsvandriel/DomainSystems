@@ -16,13 +16,13 @@ namespace Common.Messaging.Async.Pipelines
             RequestHandlerDelegate<Result> continuation,
             CancellationToken cancellationToken = default)
         {
-            var errors = await RequestValidation.ValidateAsync(request, _validators, cancellationToken);
+            var validation = await RequestValidation.AggregateAsync(request, _validators, cancellationToken);
 
-            if (!errors.Any)
+            if (validation.IsValid)
                 return await continuation(cancellationToken);
 
             return Result.Failure(
-                ProblemFactory.Validation("request.validation_failed", "One or more validation errors occurred.", errors.ToDictionary()));
+                ProblemFactory.Validation("request.validation_failed", "One or more validation errors occurred.", validation.ToDictionary()));
         }
     }
 
@@ -37,36 +37,33 @@ namespace Common.Messaging.Async.Pipelines
             RequestHandlerDelegate<Result<TResult>> continuation,
             CancellationToken cancellationToken = default)
         {
-            var validationErrors = await RequestValidation.ValidateAsync(request, _validators, cancellationToken);
+            var validation = await RequestValidation.AggregateAsync(request, _validators, cancellationToken);
 
-            if (!validationErrors.Any)
+            if (validation.IsValid)
                 return await continuation(cancellationToken);
 
             return Result.Failure<TResult>(
-                ProblemFactory.Validation("request.validation_failed", "One or more validation errors occurred.", validationErrors.ToDictionary()));
+                ProblemFactory.Validation("request.validation_failed", "One or more validation errors occurred.", validation.ToDictionary()));
         }
     }
 
     internal static class RequestValidation
     {
-        internal static async Task<ValidationErrors> ValidateAsync<TRequest>(
+        internal static async Task<ValidationResult> AggregateAsync<TRequest>(
             TRequest request,
             IEnumerable<IRequestValidator<TRequest>> validators,
             CancellationToken cancellationToken)
         {
-            var errors = new ValidationErrors();
+            var combined = new ValidationResult();
 
             foreach (var validator in validators)
             {
-                var failures = await validator.ValidateAsync(request, cancellationToken);
+                var validation = await validator.ValidateAsync(request, cancellationToken);
 
-                foreach (var failure in failures)
-                {
-                    errors.Add(failure.PropertyName, failure.ErrorMessage);
-                }
+                combined.Merge(validation);
             }
 
-            return errors;
+            return combined;
         }
     }
 }

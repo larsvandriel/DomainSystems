@@ -1,8 +1,6 @@
-﻿using Common.Results;
+using Common.Results;
+using Common.Results.Problems;
 using Inventory.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Inventory.Application.Stock.Services
 {
@@ -21,8 +19,8 @@ namespace Inventory.Application.Stock.Services
             if (_unitConverter.TryConvert(quantity, targetUnit, out var convertedQuantity))
                 return convertedQuantity!;
 
-            return Result<Quantity>.Failure(ProblemDetailsFactory.BusinessRule(
-                type: "error:UnitConversionNotSupported.",
+            return Result.Failure<Quantity>(ProblemFactory.BusinessRule(
+                code: "error:UnitConversionNotSupported.",
                 detail: $"Cannot convert from {quantity.Unit} to {targetUnit}."));
 
         }

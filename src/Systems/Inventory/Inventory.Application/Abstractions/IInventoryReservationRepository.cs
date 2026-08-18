@@ -1,9 +1,5 @@
-﻿using Common.Persistence.Concurrency;
-using Inventory.Application.Reservations.Models;
+using Common.Persistence.Concurrency;
 using Inventory.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Inventory.Application.Abstractions
 {
@@ -13,6 +9,5 @@ namespace Inventory.Application.Abstractions
         Task<InventoryReservation?> GetByReference(string reference, CancellationToken cancellationToken);
         Task<ConcurrencySnapshot<InventoryReservation>?> GetByIdAsync(Guid reservationId, CancellationToken cancellationToken);
         Task UpdateAsync(InventoryReservation reservation, ConcurrencyToken concurrencyToken, CancellationToken cancellationToken);
-        Task<IReadOnlyList<InventoryReservation>> GetAsync(ReservationQueryFilter filter, DateTimeOffset activeAt, CancellationToken cancellationToken);
     }
 }

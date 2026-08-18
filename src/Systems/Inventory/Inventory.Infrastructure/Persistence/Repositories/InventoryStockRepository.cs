@@ -1,19 +1,14 @@
-﻿using Common.Resilience;
 using Common.Persistence.Concurrency;
 using Inventory.Application.Abstractions;
 using Inventory.Domain.Models;
 using Inventory.Infrastructure.Persistence.Mappers;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Inventory.Infrastructure.Persistence.Repositories
 {
-    public class InventoryStockRepository(InventoryDbContext dbContext, IRetryPolicy retryPolicy) : IInventoryStockRepository
+    public class InventoryStockRepository(InventoryDbContext dbContext) : IInventoryStockRepository
     {
         private readonly InventoryDbContext _dbContext = dbContext;
-        private readonly IRetryPolicy _retryPolicy = retryPolicy;
 
         public async Task AddAsync(InventoryStock stock, CancellationToken cancellationToken)
         {
@@ -35,9 +30,10 @@ namespace Inventory.Infrastructure.Persistence.Repositories
 
         public async Task<ConcurrencySnapshot<InventoryStock>?> GetByItemIdAsync(Guid itemId, CancellationToken cancellationToken)
         {
-            var entity = await _retryPolicy.ExecuteAsync(
-                ct => _dbContext.InventoryStocks.AsNoTracking().Include(x => x.Item).FirstOrDefaultAsync(x => x.ItemId == itemId, ct),
-                cancellationToken);
+            var entity = await _dbContext.InventoryStocks
+                .AsNoTracking()
+                .Include(x => x.Item)
+                .FirstOrDefaultAsync(x => x.ItemId == itemId, cancellationToken);
 
             if (entity == null)
                 return null;
@@ -47,9 +43,10 @@ namespace Inventory.Infrastructure.Persistence.Repositories
 
         public async Task<IReadOnlyList<InventoryStock>> GetAllAsync(CancellationToken cancellationToken)
         {
-            var result = await _retryPolicy.ExecuteAsync(
-                ct => _dbContext.InventoryStocks.AsNoTracking().Include(x => x.Item).ToListAsync(ct),
-                cancellationToken);
+            var result = await _dbContext.InventoryStocks
+                .AsNoTracking()
+                .Include(x => x.Item)
+                .ToListAsync(cancellationToken);
 
             return [.. result.Select(x => x.ToDomain())];
         }

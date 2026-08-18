@@ -1,2 +1,26 @@
 <Solution>
+  <Folder Name="/Common/">
+    <Project Path="../../Common/Foundation/Common.Optional/Common.Optional.csproj" />
+    <Project Path="../../Common/Messaging/Common.Messaging.Abstractions/Common.Messaging.Abstractions.csproj" />
+    <Project Path="../../Common/Messaging/Common.Messaging.Async/Common.Messaging.Async.csproj" />
+    <Project Path="../../Common/Pagination/Common.Pagination/Common.Pagination.csproj" />
+    <Project Path="../../Common/Persistence/Common.Persistence.Concurrency/Common.Persistence.Concurrency.csproj" />
+    <Project Path="../../Common/Persistence/Common.Persistence.EntityFrameworkCore.SqlServer/Common.Persistence.EntityFrameworkCore.SqlServer.csproj" />
+    <Project Path="../../Common/Persistence/Common.Persistence.Resilience/Common.Persistence.Resilience.csproj" />
+    <Project Path="../../Common/Persistence/Common.Persistence.Transactions/Common.Persistence.Transactions.csproj" />
+    <Project Path="../../Common/Resilience/Common.Resilience/Common.Resilience.csproj" />
+    <Project Path="../../Common/Results/Common.Results/Common.Results.csproj" />
+  </Folder>
+  <Folder Name="/Solution Files/">
+    <File Path="../../../.editorconfig" />
+    <File Path="../../../.gitignore" />
+    <File Path="../../../Directory.Build.props" />
+    <File Path="../../../Directory.Packages.props" />
+    <File Path="../../../global.json" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="Inventory.Application/Inventory.Application.csproj" />
+    <Project Path="Inventory.Domain/Inventory.Domain.csproj" />
+    <Project Path="Inventory.Infrastructure/Inventory.Infrastructure.csproj" />
+  </Folder>
 </Solution>
