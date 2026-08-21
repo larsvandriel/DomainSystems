@@ -19,8 +19,8 @@
     <File Path="../../../global.json" />
   </Folder>
   <Folder Name="/src/">
-    <Project Path="Inventory.Application/Inventory.Application.csproj" />
-    <Project Path="Inventory.Domain/Inventory.Domain.csproj" />
-    <Project Path="Inventory.Infrastructure/Inventory.Infrastructure.csproj" />
+    <Project Path="Inventory.Application/Inventory.Core.Application.csproj" />
+    <Project Path="Inventory.Domain/Inventory.Core.Domain.csproj" />
+    <Project Path="Inventory.Infrastructure/Inventory.Core.Infrastructure.csproj" />
   </Folder>
 </Solution>

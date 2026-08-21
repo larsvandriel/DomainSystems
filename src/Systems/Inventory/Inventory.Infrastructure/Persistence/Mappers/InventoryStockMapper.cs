@@ -18,7 +18,6 @@ namespace Inventory.Infrastructure.Persistence.Mappers
             return new InventoryStockEntity
             {
                 ItemId = stock.Item.Id,
-                Item = stock.Item.ToEntity(),
                 QuantityValue = stock.Quantity.Value,
                 QuantityUnit = stock.Quantity.Unit
             };
@@ -28,8 +27,6 @@ namespace Inventory.Infrastructure.Persistence.Mappers
         {
             entity.QuantityValue = stock.Quantity.Value;
             entity.QuantityUnit = stock.Quantity.Unit;
-
-            entity.Item.Name = stock.Item.Name;
         }
     }
 }

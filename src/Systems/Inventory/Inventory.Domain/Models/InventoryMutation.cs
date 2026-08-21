@@ -1,4 +1,4 @@
-﻿using Inventory.Domain.Enums;
+using Inventory.Domain.Enums;
 
 namespace Inventory.Domain.Models
 {
@@ -51,7 +51,7 @@ namespace Inventory.Domain.Models
             ArgumentNullException.ThrowIfNull(oldQuantity);
             ArgumentNullException.ThrowIfNull(newQuantity);
 
-            if (oldQuantity.Value <= newQuantity.Value)
+            if (oldQuantity.Value >= newQuantity.Value)
                 throw new InvalidOperationException("Tried to create increasement mutation while new quantity is less or equal to old quantity.");
 
             return new InventoryMutation(item, oldQuantity, newQuantity, InventoryMutationType.Increase);
@@ -63,8 +63,8 @@ namespace Inventory.Domain.Models
             ArgumentNullException.ThrowIfNull(oldQuantity);
             ArgumentNullException.ThrowIfNull(newQuantity);
 
-            if (oldQuantity.Value >= newQuantity.Value)
-                throw new InvalidOperationException("Tried to create decreasement mutation while new quantity is less or equal to old quantity.");
+            if (oldQuantity.Value <= newQuantity.Value)
+                throw new InvalidOperationException("An increase mutation requires the new quantity to be greater than the old quantity.");
 
             return new InventoryMutation(item, oldQuantity, newQuantity, InventoryMutationType.Decrease);
         }
@@ -76,7 +76,7 @@ namespace Inventory.Domain.Models
             ArgumentNullException.ThrowIfNull(newQuantity);
 
             if (oldQuantity.Value == newQuantity.Value)
-                throw new InvalidOperationException("Tried to create adjustment mutation while no adjustment was made.");
+                throw new InvalidOperationException("A decrease mutation requires the new quantity to be less than the old quantity.");
 
             return new InventoryMutation(item, oldQuantity, newQuantity, InventoryMutationType.Adjustment);
         }

@@ -8,6 +8,6 @@
     <ProjectReference Include="..\..\..\Common\Persistence\Common.Persistence.Resilience\Common.Persistence.Resilience.csproj" />
     <ProjectReference Include="..\..\..\Common\Persistence\Common.Persistence.Transactions\Common.Persistence.Transactions.csproj" />
     <ProjectReference Include="..\..\..\Common\Results\Common.Results\Common.Results.csproj" />
-    <ProjectReference Include="..\Inventory.Domain\Inventory.Domain.csproj" />
+    <ProjectReference Include="..\Inventory.Domain\Inventory.Core.Domain.csproj" />
   </ItemGroup>
 </Project>
